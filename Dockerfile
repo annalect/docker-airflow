@@ -12,7 +12,7 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV TERM linux
 
 # Airflow
-ARG AIRFLOW_VERSION=1.9.0rc8
+ARG AIRFLOW_VERSION=1.9.0
 ARG AIRFLOW_HOME=/usr/local/airflow
 
 # Define en_US.
@@ -55,7 +55,7 @@ RUN set -ex \
                    pyOpenSSL \
                    ndg-httpsclient \
                    pyasn1 \
-                   apache-airflow[crypto,celery,postgres,hive,jdbc,redis]==$AIRFLOW_VERSION --find-links=https://dist.apache.org/repos/dist/dev/incubator/airflow/$AIRFLOW_VERSION/ \
+                   apache-airflow[crypto,celery,postgres,hive,jdbc,redis]==$AIRFLOW_VERSION \
     && apt-get purge --auto-remove -yqq $buildDeps \
     && apt-get clean \
     && rm -rf \
