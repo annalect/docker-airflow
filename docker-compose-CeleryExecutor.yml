@@ -11,7 +11,9 @@ services:
             - POSTGRES_DB=airflow
 
     webserver:
-        image: puckel/docker-airflow:1.8.2
+        build:
+            context: .
+            dockerfile: Dockerfile
         restart: always
         depends_on:
             - postgres
@@ -20,9 +22,13 @@ services:
             - LOAD_EX=n
             - FERNET_KEY=46BKJoQYlPPOexq0OhDZnIlNepKFf87WFwLbfzqDDho=
             - EXECUTOR=Celery
-            # - POSTGRES_USER=airflow
-            # - POSTGRES_PASSWORD=airflow
-            # - POSTGRES_DB=airflow
+            - POSTGRES_DB=airflow
+            - POSTGRES_PASSWORD=airflow
+            - POSTGRES_USER=airflow
+            - POSTGRES_HOST=postgres
+            - POSTGRES_PORT=5432
+            - REDIS_HOST=redis
+            - REDIS_PORT=6379
         volumes:
             - ./dags:/usr/local/airflow/dags
         ports:
@@ -30,18 +36,24 @@ services:
         command: webserver
 
     flower:
-        image: puckel/docker-airflow:1.8.2
+        build:
+            context: .
+            dockerfile: Dockerfile
         restart: always
         depends_on:
             - redis
         environment:
             - EXECUTOR=Celery
+            - REDIS_HOST=redis
+            - REDIS_PORT=6379
         ports:
             - "5555:5555"
         command: flower
 
     scheduler:
-        image: puckel/docker-airflow:1.8.2
+        build:
+            context: .
+            dockerfile: Dockerfile
         restart: always
         depends_on:
             - webserver
@@ -51,13 +63,17 @@ services:
             - LOAD_EX=n
             - FERNET_KEY=46BKJoQYlPPOexq0OhDZnIlNepKFf87WFwLbfzqDDho=
             - EXECUTOR=Celery
-            # - POSTGRES_USER=airflow
-            # - POSTGRES_PASSWORD=airflow
-            # - POSTGRES_DB=airflow
+            - POSTGRES_DB=airflow
+            - POSTGRES_PASSWORD=airflow
+            - POSTGRES_USER=airflow
+            - POSTGRES_HOST=postgres
+            - POSTGRES_PORT=5432
         command: scheduler
 
     worker:
-        image: puckel/docker-airflow:1.8.2
+        build:
+            context: .
+            dockerfile: Dockerfile
         restart: always
         depends_on:
             - scheduler
@@ -66,7 +82,9 @@ services:
         environment:
             - FERNET_KEY=46BKJoQYlPPOexq0OhDZnIlNepKFf87WFwLbfzqDDho=
             - EXECUTOR=Celery
-            # - POSTGRES_USER=airflow
-            # - POSTGRES_PASSWORD=airflow
-            # - POSTGRES_DB=airflow
+            - POSTGRES_DB=airflow
+            - POSTGRES_PASSWORD=airflow
+            - POSTGRES_USER=airflow
+            - POSTGRES_HOST=postgres
+            - POSTGRES_PORT=5432
         command: worker
