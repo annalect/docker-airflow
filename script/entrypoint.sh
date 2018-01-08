@@ -76,8 +76,7 @@ case "$1" in
     if [ "$AIRFLOW__CORE__EXECUTOR" = "LocalExecutor" ];
     then
       # With the "Local" executor it should all run in one container.
-      airflow webserver &
-      airflow scheduler
+      airflow scheduler &
     fi
     exec airflow webserver
     ;;

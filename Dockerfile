@@ -1,4 +1,4 @@
-# VERSION 1.8.1-1
+# VERSION 1.9.0-1
 # AUTHOR: Matthieu "Puckel_" Roisil
 # DESCRIPTION: Basic Airflow container
 # BUILD: docker build --rm -t puckel/docker-airflow .
@@ -43,6 +43,7 @@ RUN set -ex \
         python3-requests \
         apt-utils \
         curl \
+        rsync \
         netcat \
         locales \
     && sed -i 's/^# en_US.UTF-8 UTF-8$/en_US.UTF-8 UTF-8/g' /etc/locale.gen \
@@ -51,11 +52,12 @@ RUN set -ex \
     && useradd -ms /bin/bash -d ${AIRFLOW_HOME} airflow \
     && python -m pip install -U pip setuptools wheel \
     && pip install Cython \
-                   pytz \
-                   pyOpenSSL \
-                   ndg-httpsclient \
-                   pyasn1 \
-                   apache-airflow[crypto,celery,postgres,hive,jdbc,redis]==$AIRFLOW_VERSION \
+    && pip install pytz \
+    && pip install pyOpenSSL \
+    && pip install ndg-httpsclient \
+    && pip install pyasn1 \
+    && pip install apache-airflow[crypto,celery,postgres,hive,jdbc]==$AIRFLOW_VERSION \
+    && pip install celery[redis]==4.0.2 \
     && apt-get purge --auto-remove -yqq $buildDeps \
     && apt-get clean \
     && rm -rf \
